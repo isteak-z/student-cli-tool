@@ -11,3 +11,6 @@ dependencies = ["click"]
 
 [project.scripts]
 student-cli-tool = "student_cli_tool.cli:hello"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/student_cli_tool"]

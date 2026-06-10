@@ -1,0 +1,39 @@
+name: Package on Release
+
+on:
+  release:
+    types: [created]  # Triggers only on non-draft release publish
+
+permissions:
+  contents: write  # For uploading assets to release
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install build tools
+        run: python -m pip install build --user
+
+     - name: Build package
+       run: python -m build --sdist --wheel
+
+
+     - name: List dist contents
+       run: ls -la dist/
+
+
+     - name: Upload assets to release
+       env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+       run: |
+        gh release upload ${{ github.event.release.tag_name }} \
+         dist/*.whl \
+         dist/*.tar.gz \
+         --clobber
